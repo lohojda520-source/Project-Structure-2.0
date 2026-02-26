@@ -1,6 +1,6 @@
 from aiogram import Router, F
 from aiogram.types import CallbackQuery
-from paypal_service import create_payment
+from services.payment_service import create_payment
 from data.products import PRODUCTS
 
 router = Router()
@@ -19,4 +19,5 @@ async def buy_handler(callback: CallbackQuery):
 
     await callback.message.answer(
         f"Complete payment:\n{approval_url}"
+
     )
