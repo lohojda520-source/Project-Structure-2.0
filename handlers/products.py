@@ -8,15 +8,13 @@ router = Router()
 async def show_products(message: Message):
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="Google Ads – $49", callback_data="buy_google")],
-        [InlineKeyboardButton(text="Facebook Ads – $79", callback_data="buy_facebook")],
-        [InlineKeyboardButton(text="Premium – $997", callback_data="buy_premium")]
+        [InlineKeyboardButton(text="Meta Ads – $79", callback_data="buy_meta")]
     ])
 
     await message.answer(
-        "🔥 Choose your package:\n\n"
-        "💰 Google Ads – Starter package\n"
-        "📈 Facebook Ads – Growth package\n"
-        "🚀 Premium – Full Marketing Suite\n\n"
+        "🚀 Digital Marketing Systems\n\n"
+        "💰 Google Ads – $49\n"
+        "📈 Meta Ads – $79\n\n"
         "Select an option below:",
         reply_markup=keyboard
     )
