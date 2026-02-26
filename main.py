@@ -8,11 +8,9 @@ from services.paypal_service import capture_payment
 from services.delivery_service import deliver_product
 from services.order_service import order_exists, save_order
 
-# Імпорт роутерів
-from handlers.start import router as start_router
+# Імпорт тільки потрібних роутерів
 from handlers.products import router as products_router
 from handlers.payments import router as payments_router
-from handlers.premium import router as premium_router
 
 
 # ==============================
@@ -25,10 +23,8 @@ if not BOT_TOKEN:
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
 
-dp.include_router(start_router)
 dp.include_router(products_router)
 dp.include_router(payments_router)
-dp.include_router(premium_router)
 
 PORT = int(os.environ.get("PORT", 8000))
 
@@ -94,10 +90,11 @@ async def main():
     print(f"Server running on port {PORT}")
     print("Bot started...")
 
+    # ВАЖЛИВО — щоб не було TelegramConflictError
+    await bot.delete_webhook(drop_pending_updates=True)
+
     await dp.start_polling(bot)
 
 
 if __name__ == "__main__":
     asyncio.run(main())
-
-
