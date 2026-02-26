@@ -1,11 +1,8 @@
 import os
-print("ALL ENV:", os.environ)
 import asyncio
-import os
 from aiohttp import web
 from aiogram import Bot, Dispatcher
 
-from config import BOT_TOKEN
 from services.paypal_service import capture_payment
 from services.delivery_service import deliver_product
 from services.order_service import order_exists, save_order
@@ -20,6 +17,11 @@ from handlers.premium import router as premium_router
 # ==============================
 # INIT
 # ==============================
+
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+
+if not BOT_TOKEN:
+    raise ValueError("BOT_TOKEN is not set in Railway Variables!")
 
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
@@ -99,5 +101,4 @@ async def main():
 
 
 if __name__ == "__main__":
-
     asyncio.run(main())
