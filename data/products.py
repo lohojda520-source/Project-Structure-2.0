@@ -5,8 +5,13 @@ PRODUCTS = {
         "price": "49"
     },
     "meta": {
-        "name": "Meta Ads System",
+        "name": "Facebook Ads System",
         "file": "assets/meta_ads.pdf",
         "price": "79"
+    },
+    "premium": {
+        "name": "Premium Marketing Suite",
+        "file": "assets/premium.pdf",
+        "price": "997"
     }
 }
