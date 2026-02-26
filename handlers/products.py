@@ -1,10 +1,11 @@
 from aiogram import Router
 from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.filters import Command
 
 router = Router()
 
 
-@router.message(commands=["start"])
+@router.message(Command("start"))
 async def start_handler(message: Message):
 
     text = (
@@ -19,7 +20,7 @@ async def start_handler(message: Message):
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="Google Ads – $49", callback_data="buy_google")],
         [InlineKeyboardButton(text="Meta Ads – $79", callback_data="buy_meta")],
-        [InlineKeyboardButton(text="Premium – $997", callback_data="contact_premium")]
+        [InlineKeyboardButton(text="Premium – $997", callback_data="buy_premium")]
     ])
 
     await message.answer(
