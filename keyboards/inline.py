@@ -19,12 +19,6 @@ def main_keyboard():
                     text="📙 Meta Ads – $79\nPDF Instruction (English Version)",
                     callback_data="buy_meta"
                 )
-            ],
-            [
-                InlineKeyboardButton(
-                    text="💎 Premium – $997\nContact me to proceed to private sales",
-                    callback_data="contact_premium"
-                )
             ]
         ]
     )
