@@ -9,7 +9,7 @@ async def show_products(message: Message):
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="Google Ads – $49", callback_data="buy_google")],
         [InlineKeyboardButton(text="Facebook Ads – $79", callback_data="buy_meta")],
-        [InlineKeyboardButton(text="Premium – $997", callback_data="buy_premium")]
+        
     ])
 
     await message.answer(
@@ -30,3 +30,4 @@ async def start_handler(message: Message):
 @router.message(Command("products"))
 async def products_handler(message: Message):
     await show_products(message)
+
