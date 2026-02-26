@@ -1,32 +1,32 @@
 from aiogram import Router
-from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.filters import Command
+from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 
 router = Router()
 
 
-@router.message(Command("start"))
-async def start_handler(message: Message):
-
-    text = (
-        "📢 *IMPORTANT INFORMATION*\n\n"
-        "Advertising platforms constantly update their algorithms and interfaces.\n\n"
-        "All materials are aligned with the latest updates of Google Ads and Meta Ads.\n\n"
-        "🛡 Validity guarantee — 60 days or until major interface changes occur.\n\n"
-        "━━━━━━━━━━━━━━━\n"
-        "*Choose a package below:* 👇"
-    )
-
+async def show_products(message: Message):
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="Google Ads – $49", callback_data="buy_google")],
-        [InlineKeyboardButton(text="Meta Ads – $79", callback_data="buy_meta")],
+        [InlineKeyboardButton(text="Facebook Ads – $79", callback_data="buy_facebook")],
         [InlineKeyboardButton(text="Premium – $997", callback_data="buy_premium")]
     ])
 
     await message.answer(
-        text,
-        reply_markup=keyboard,
-        parse_mode="Markdown"
+        "🔥 Choose your package:\n\n"
+        "💰 Google Ads – Starter package\n"
+        "📈 Facebook Ads – Growth package\n"
+        "🚀 Premium – Full Marketing Suite\n\n"
+        "Select an option below:",
+        reply_markup=keyboard
     )
-async def show_products(message: Message):
-    # твій текст + кнопки тут
+
+
+@router.message(Command("start"))
+async def start_handler(message: Message):
+    await show_products(message)
+
+
+@router.message(Command("products"))
+async def products_handler(message: Message):
+    await show_products(message)
