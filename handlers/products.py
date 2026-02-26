@@ -1,61 +1,29 @@
-from aiogram import Router, F
-from aiogram.types import CallbackQuery
-from aiogram.exceptions import TelegramBadRequest
-
-from services.payment_service import create_payment
-from keyboards.inline import payment_link_keyboard
+from aiogram import Router
+from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 
 router = Router()
 
 
-# ==============================
-# GOOGLE ADS PURCHASE
-# ==============================
+@router.message(commands=["start"])
+async def start_handler(message: Message):
 
-@router.callback_query(F.data == "buy_google")
-async def buy_google(callback: CallbackQuery):
-    await callback.answer()
-
-    payment_url = await create_payment(
-        user_id=callback.from_user.id,
-        product_key="google"
+    text = (
+        "📢 *IMPORTANT INFORMATION*\n\n"
+        "Advertising platforms constantly update their algorithms and interfaces.\n\n"
+        "All materials are aligned with the latest updates of Google Ads and Meta Ads.\n\n"
+        "🛡 Validity guarantee — 60 days or until major interface changes occur.\n\n"
+        "━━━━━━━━━━━━━━━\n"
+        "*Choose a package below:* 👇"
     )
 
-    await callback.message.answer(
-        "💳 Complete your payment below:",
-        reply_markup=payment_link_keyboard(payment_url)
-    )
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="Google Ads – $49", callback_data="buy_google")],
+        [InlineKeyboardButton(text="Meta Ads – $79", callback_data="buy_meta")],
+        [InlineKeyboardButton(text="Premium – $997", callback_data="contact_premium")]
+    ])
 
-
-# ==============================
-# META ADS PURCHASE
-# ==============================
-
-@router.callback_query(F.data == "buy_meta")
-async def buy_meta(callback: CallbackQuery):
-    await callback.answer()
-
-    payment_url = await create_payment(
-        user_id=callback.from_user.id,
-        product_key="meta"
-    )
-
-    await callback.message.answer(
-        "💳 Complete your payment below:",
-        reply_markup=payment_link_keyboard(payment_url)
-    )
-
-
-# ==============================
-# PREMIUM CONTACT
-# ==============================
-
-@router.callback_query(F.data == "contact_premium")
-async def contact_premium(callback: CallbackQuery):
-    await callback.answer()
-
-    await callback.message.answer(
-        "💎 Premium Package\n\n"
-        "Please contact me directly to proceed with private sales.\n\n"
-        "📩 @your_username"
+    await message.answer(
+        text,
+        reply_markup=keyboard,
+        parse_mode="Markdown"
     )
