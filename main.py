@@ -1,3 +1,5 @@
+import os
+print("ALL ENV:", os.environ)
 import asyncio
 import os
 from aiohttp import web
@@ -97,4 +99,5 @@ async def main():
 
 
 if __name__ == "__main__":
+
     asyncio.run(main())
