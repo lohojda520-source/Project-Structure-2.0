@@ -1,3 +1,4 @@
+print("BOT_TOKEN:", BOT_TOKEN)
 import os
 import asyncio
 from aiohttp import web
@@ -99,3 +100,4 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
