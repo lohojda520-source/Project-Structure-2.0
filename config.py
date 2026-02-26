@@ -1,9 +1,8 @@
 import os
-from dotenv import load_dotenv
 
-load_dotenv()
+BOT_TOKEN = os.environ.get("BOT_TOKEN")
 
-BOT_TOKEN = os.getenv("BOT_TOKEN")
-PAYPAL_CLIENT_ID = os.getenv("PAYPAL_CLIENT_ID")
-PAYPAL_SECRET = os.getenv("PAYPAL_SECRET")
-PAYPAL_BASE = os.getenv("PAYPAL_BASE")
+PAYPAL_CLIENT_ID = os.environ.get("PAYPAL_CLIENT_ID")
+PAYPAL_SECRET = os.environ.get("PAYPAL_SECRET")
+PAYPAL_BASE = os.environ.get("PAYPAL_BASE")
+APP_BASE_URL = os.environ.get("APP_BASE_URL")
