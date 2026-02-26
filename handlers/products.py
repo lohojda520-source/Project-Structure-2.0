@@ -28,3 +28,5 @@ async def start_handler(message: Message):
         reply_markup=keyboard,
         parse_mode="Markdown"
     )
+async def show_products(message: Message):
+    # твій текст + кнопки тут
