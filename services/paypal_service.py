@@ -27,7 +27,10 @@ def get_access_token():
 # CREATE ORDER
 # ==============================
 
-def create_payment(product_name: str, price: float, telegram_id: str, product_key: str):
+def create_payment(product_name: str, price, telegram_id: str, product_key: str):
+
+    # 🔥 Гарантовано перетворюємо в float
+    price = float(price)
 
     access_token = get_access_token()
 
@@ -49,17 +52,23 @@ def create_payment(product_name: str, price: float, telegram_id: str, product_ke
             }],
             "application_context": {
                 "return_url": f"{APP_BASE_URL}/success",
-                "cancel_url": f"{APP_BASE_URL}/cancel"
+                "cancel_url": f"{APP_BASE_URL}/cancel",
+                "brand_name": "Digital Marketing Systems",
+                "landing_page": "LOGIN",
+                "user_action": "PAY_NOW"
             }
         }
     )
 
-    response.raise_for_status()
+    if response.status_code != 201:
+        print("PayPal create error:", response.text)
+        return None
+
     data = response.json()
 
-    for link in data["links"]:
-        if link["rel"] == "approve":
-            return link["href"]
+    for link in data.get("links", []):
+        if link.get("rel") == "approve":
+            return link.get("href")
 
     return None
 
