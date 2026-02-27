@@ -1,17 +1,12 @@
 PRODUCTS = {
     "google": {
         "name": "Google Ads System",
-        "file": "assets/google_ads.pdf",
+        "file": "assets/SmartAdminBot_Lite_v1.8.zip",
         "price": "49"
     },
     "meta": {
         "name": "Facebook Ads System",
-        "file": "assets/meta_ads.pdf",
+        "file": "assets/SmartAdminBot_pro.zip",
         "price": "79"
-    },
-    "premium": {
-        "name": "Premium Marketing Suite",
-        "file": "assets/premium.pdf",
-        "price": "997"
     }
 }
