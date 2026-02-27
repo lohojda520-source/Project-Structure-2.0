@@ -7,15 +7,15 @@ router = Router()
 
 async def show_products(message: Message):
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="Google Ads – $49", callback_data="buy_google")],
-        [InlineKeyboardButton(text="Facebook Ads – $79", callback_data="buy_meta")],
+        [InlineKeyboardButton(text="🚀 SmartAdminBot Lite – $49", callback_data="buy_google")],
+        [InlineKeyboardButton(text="🔥 SmartAdminBot Pro – $79", callback_data="buy_meta")],
     ])
 
     await message.answer(
-        "🔥 Choose your package:\n\n"
-        "💰 Google Ads – Starter package\n"
-        "📈 Facebook Ads – Growth package\n\n"
-        "Select an option below:",
+        "🔥 Choose your SmartAdminBot version:\n\n"
+        "🚀 Lite – Ready-to-use advertising system\n"
+        "🔥 Pro – Advanced automation + scaling tools\n\n"
+        "Select your version below:",
         reply_markup=keyboard
     )
 
