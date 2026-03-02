@@ -8,19 +8,17 @@ from services.paypal_service import capture_payment
 from services.delivery_service import deliver_product
 from services.order_service import order_exists, save_order
 
-# 🔥 ДОДАЙ ЦЕ
 from handlers.funnel import router as funnel_router
 from handlers.products import router as products_router
 from handlers.payments import router as payments_router
 
 
 if not BOT_TOKEN:
-    raise ValueError("BOT_TOKEN is not set in Railway Variables!")
+    raise ValueError("BOT_TOKEN is not set!")
 
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
 
-# 🔥 Funnel ОБОВʼЯЗКОВО перший
 dp.include_router(funnel_router)
 dp.include_router(products_router)
 dp.include_router(payments_router)
@@ -38,8 +36,8 @@ async def success_handler(request):
         return web.Response(text="Order already processed.")
 
     try:
-        # 🔥 ТУТ ТЕЖ БУВ БАГ — НЕ БУЛО await
-        data = await capture_payment(order_id)
+        # ⚠️ БЕЗ await (бо sync)
+        data = capture_payment(order_id)
 
         if data.get("status") != "COMPLETED":
             return web.Response(text="Payment not completed.")
@@ -75,10 +73,7 @@ async def main():
     site = web.TCPSite(runner, "0.0.0.0", PORT)
     await site.start()
 
-    print(f"Server running on port {PORT}")
-    print("Bot started...")
-
-    await bot.delete_webhook(drop_pending_updates=True)
+    await bot.delete_webhook()
     await dp.start_polling(bot)
 
 
