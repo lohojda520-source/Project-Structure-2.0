@@ -1,40 +1,38 @@
-async def create_payment(user_id: int, product_key: str):
-    access_token = await get_access_token()
+from aiogram import Router, F
+from aiogram.types import CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
 
-    amount = get_product_price(product_key)
+from services.paypal_service import create_payment
+from data.products import PRODUCTS
 
-    async with aiohttp.ClientSession() as session:
-        async with session.post(
-            f"{PAYPAL_BASE}/v2/checkout/orders",
-            headers={
-                "Authorization": f"Bearer {access_token}",
-                "Content-Type": "application/json",
-            },
-            json={
-                "intent": "CAPTURE",
-                "purchase_units": [
-                    {
-                        "amount": {
-                            "currency_code": "USD",
-                            "value": f"{amount:.2f}"
-                        },
-                        # 🔥 ОСЬ ГОЛОВНЕ
-                        "custom_id": f"{user_id}|{product_key}"
-                    }
-                ],
-                "application_context": {
-                    "return_url": f"{APP_BASE_URL}/success",
-                    "cancel_url": f"{APP_BASE_URL}/cancel"
-                }
-            },
-        ) as response:
-            data = await response.json()
+router = Router()
 
-            if "links" not in data:
-                raise Exception(f"PayPal Order Error: {data}")
 
-            for link in data["links"]:
-                if link["rel"] == "approve":
-                    return link["href"]
+@router.callback_query(F.data.startswith("confirm_"))
+async def confirm_payment(callback: CallbackQuery):
+    await callback.answer()
 
-            raise Exception("Approval link not found")
+    product_key = callback.data.replace("confirm_", "")
+    product = PRODUCTS.get(product_key)
+
+    if not product:
+        await callback.message.answer("❌ Product not found.")
+        return
+
+    approval_url = await create_payment(
+        user_id=callback.from_user.id,
+        product_key=product_key
+    )
+
+    if not approval_url:
+        await callback.message.answer("❌ Failed to create PayPal payment.")
+        return
+
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="💳 Pay with PayPal", url=approval_url)]
+    ])
+
+    await callback.message.answer(
+        f"You selected: {product['name']}\n\n"
+        "Click the button below to complete your payment:",
+        reply_markup=keyboard
+    )
