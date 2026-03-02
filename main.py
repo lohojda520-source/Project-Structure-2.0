@@ -46,7 +46,8 @@ async def success_handler(request):
         return web.Response(text="Order already processed.")
 
     try:
-        data = capture_payment(order_id)
+        # ВАЖЛИВО — ОБОВ'ЯЗКОВО await
+        data = await capture_payment(order_id)
 
         if data.get("status") != "COMPLETED":
             return web.Response(text="Payment not completed.")
@@ -58,6 +59,7 @@ async def success_handler(request):
 
         save_order(order_id, telegram_id, product_key)
 
+        # Автоматична відправка файлу
         await deliver_product(bot, int(telegram_id), product_key)
 
         return web.Response(text="Payment successful. Check your Telegram.")
