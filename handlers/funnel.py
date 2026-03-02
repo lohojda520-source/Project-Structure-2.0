@@ -23,7 +23,7 @@ def confirm_keyboard(product_key: str):
 
 
 # ==============================
-# START (IDEAL SALES TEXT)
+# START
 # ==============================
 
 @router.message(Command("start"))
@@ -35,7 +35,7 @@ async def start_handler(message: Message):
         "✔ Reply instantly 24/7\n"
         "✔ Close sales on autopilot\n"
         "✔ Works in any niche\n\n"
-        "Already sold to 38+ users this month 🚀\n\n"
+        "Trusted by 147+ Telegram creators 🚀\n\n"
         "• One-time payment\n"
         "• Instant delivery\n"
         "• Lifetime access\n"
@@ -64,7 +64,7 @@ async def back_to_plans(callback: CallbackQuery):
         "✔ Reply instantly 24/7\n"
         "✔ Close sales on autopilot\n"
         "✔ Works in any niche\n\n"
-        "Already sold to 38+ users this month 🚀\n\n"
+        "Trusted by 147+ Telegram creators 🚀\n\n"
         "• One-time payment\n"
         "• Instant delivery\n"
         "• Lifetime access\n"
