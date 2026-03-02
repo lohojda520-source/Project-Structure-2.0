@@ -10,27 +10,23 @@ from services.order_service import order_exists, save_order
 
 # Роутери
 from handlers.funnel import router as funnel_router
-from handlers.products import router as products_router
 from handlers.payments import router as payments_router
-
 
 # ==============================
 # INIT
 # ==============================
 
 if not BOT_TOKEN:
-    raise ValueError("BOT_TOKEN is not set in Railway Variables!")
+    raise ValueError("BOT_TOKEN is not set!")
 
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
 
-# ВАЖЛИВО: funnel перший
+# ВАЖЛИВО: підключаємо роутери
 dp.include_router(funnel_router)
-dp.include_router(products_router)
 dp.include_router(payments_router)
 
 PORT = int(os.environ.get("PORT", 8000))
-
 
 # ==============================
 # SUCCESS HANDLER
@@ -46,20 +42,22 @@ async def success_handler(request):
         return web.Response(text="Order already processed.")
 
     try:
-        # ВАЖЛИВО — ОБОВ'ЯЗКОВО await
+        # 🔥 ОБОВ'ЯЗКОВО await
         data = await capture_payment(order_id)
 
         if data.get("status") != "COMPLETED":
             return web.Response(text="Payment not completed.")
 
         capture_data = data["purchase_units"][0]["payments"]["captures"][0]
-        custom_id = capture_data["custom_id"]
+        custom_id = capture_data.get("custom_id")
+
+        if not custom_id or "|" not in custom_id:
+            return web.Response(text="Invalid payment data.")
 
         telegram_id, product_key = custom_id.split("|")
 
         save_order(order_id, telegram_id, product_key)
 
-        # Автоматична відправка файлу
         await deliver_product(bot, int(telegram_id), product_key)
 
         return web.Response(text="Payment successful. Check your Telegram.")
@@ -84,7 +82,7 @@ async def cancel_handler(request):
 async def main():
     app = web.Application()
 
-    # PayPal routes
+    # PayPal маршрути
     app.router.add_get("/success", success_handler)
     app.router.add_get("/cancel", cancel_handler)
 
