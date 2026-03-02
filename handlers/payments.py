@@ -7,18 +7,17 @@ from data.products import PRODUCTS
 router = Router()
 
 
-@router.callback_query(F.data.startswith("buy_"))
-async def buy_handler(callback: CallbackQuery):
+@router.callback_query(F.data.startswith("confirm_"))
+async def confirm_handler(callback: CallbackQuery):
     await callback.answer()
 
-    product_key = callback.data.replace("buy_", "")
+    product_key = callback.data.replace("confirm_", "")
     product = PRODUCTS.get(product_key)
 
     if not product:
         await callback.message.answer("❌ Product not found.")
         return
 
-    # ✅ ПРАВИЛЬНИЙ виклик
     approval_url = await create_payment(
         user_id=callback.from_user.id,
         product_key=product_key
@@ -34,6 +33,6 @@ async def buy_handler(callback: CallbackQuery):
 
     await callback.message.answer(
         f"You selected: {product['name']}\n\n"
-        "Click the button below to complete your payment:",
+        "Click below to complete your payment:",
         reply_markup=keyboard
     )
