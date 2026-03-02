@@ -8,29 +8,25 @@ from services.paypal_service import capture_payment
 from services.delivery_service import deliver_product
 from services.order_service import order_exists, save_order
 
-# Роутери
+# 🔥 ДОДАЙ ЦЕ
 from handlers.funnel import router as funnel_router
+from handlers.products import router as products_router
 from handlers.payments import router as payments_router
 
-# ==============================
-# INIT
-# ==============================
 
 if not BOT_TOKEN:
-    raise ValueError("BOT_TOKEN is not set!")
+    raise ValueError("BOT_TOKEN is not set in Railway Variables!")
 
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
 
-# ВАЖЛИВО: підключаємо роутери
+# 🔥 Funnel ОБОВʼЯЗКОВО перший
 dp.include_router(funnel_router)
+dp.include_router(products_router)
 dp.include_router(payments_router)
 
 PORT = int(os.environ.get("PORT", 8000))
 
-# ==============================
-# SUCCESS HANDLER
-# ==============================
 
 async def success_handler(request):
     order_id = request.query.get("token")
@@ -42,17 +38,14 @@ async def success_handler(request):
         return web.Response(text="Order already processed.")
 
     try:
-        # 🔥 ОБОВ'ЯЗКОВО await
+        # 🔥 ТУТ ТЕЖ БУВ БАГ — НЕ БУЛО await
         data = await capture_payment(order_id)
 
         if data.get("status") != "COMPLETED":
             return web.Response(text="Payment not completed.")
 
         capture_data = data["purchase_units"][0]["payments"]["captures"][0]
-        custom_id = capture_data.get("custom_id")
-
-        if not custom_id or "|" not in custom_id:
-            return web.Response(text="Invalid payment data.")
+        custom_id = capture_data["custom_id"]
 
         telegram_id, product_key = custom_id.split("|")
 
@@ -67,22 +60,12 @@ async def success_handler(request):
         return web.Response(text="Error processing payment.")
 
 
-# ==============================
-# CANCEL HANDLER
-# ==============================
-
 async def cancel_handler(request):
     return web.Response(text="Payment cancelled.")
 
 
-# ==============================
-# MAIN
-# ==============================
-
 async def main():
     app = web.Application()
-
-    # PayPal маршрути
     app.router.add_get("/success", success_handler)
     app.router.add_get("/cancel", cancel_handler)
 
@@ -95,9 +78,7 @@ async def main():
     print(f"Server running on port {PORT}")
     print("Bot started...")
 
-    # Щоб не було TelegramConflictError
     await bot.delete_webhook(drop_pending_updates=True)
-
     await dp.start_polling(bot)
 
 
