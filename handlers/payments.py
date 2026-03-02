@@ -1,3 +1,4 @@
+print("CONFIRM HANDLER TRIGGERED")
 from aiogram import Router, F
 from aiogram.types import CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
 
@@ -36,3 +37,4 @@ async def confirm_handler(callback: CallbackQuery):
         "Click below to complete your payment:",
         reply_markup=keyboard
     )
+
