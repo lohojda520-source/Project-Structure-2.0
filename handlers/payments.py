@@ -8,7 +8,7 @@ router = Router()
 
 
 @router.callback_query(F.data.startswith("confirm_"))
-async def confirm_handler(callback: CallbackQuery):
+async def confirm_payment(callback: CallbackQuery):
     await callback.answer()
 
     product_key = callback.data.replace("confirm_", "")
@@ -18,23 +18,28 @@ async def confirm_handler(callback: CallbackQuery):
         await callback.message.answer("❌ Product not found.")
         return
 
-    approval_url = await create_payment(
-        user_id=callback.from_user.id,
-        product_key=product_key
-    )
+    try:
+        approval_url = create_payment(
+            product_name=product["name"],
+            price=product["price"],
+            telegram_id=str(callback.from_user.id),
+            product_key=product_key
+        )
 
-    if not approval_url:
-        await callback.message.answer("❌ Failed to create PayPal payment.")
-        return
+        if not approval_url:
+            await callback.message.answer("❌ Failed to create payment.")
+            return
 
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="💳 Pay with PayPal", url=approval_url)]
-    ])
+        keyboard = InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text="💳 Pay with PayPal", url=approval_url)]
+        ])
 
-    await callback.message.answer(
-        f"You selected: {product['name']}\n\n"
-        "Click below to complete your payment:",
-        reply_markup=keyboard
-    )
+        await callback.message.answer(
+            f"🛒 You selected: {product['name']}\n\n"
+            "Click below to complete your payment:",
+            reply_markup=keyboard
+        )
 
-
+    except Exception as e:
+        print("Payment error:", e)
+        await callback.message.answer("❌ Payment error occurred.")
