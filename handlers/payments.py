@@ -18,10 +18,9 @@ async def buy_handler(callback: CallbackQuery):
         await callback.message.answer("❌ Product not found.")
         return
 
-    approval_url = create_payment(
-        product_name=product["name"],
-        price=product["price"],
-        telegram_id=str(callback.from_user.id),
+    # ✅ ПРАВИЛЬНИЙ виклик
+    approval_url = await create_payment(
+        user_id=callback.from_user.id,
         product_key=product_key
     )
 
@@ -34,6 +33,7 @@ async def buy_handler(callback: CallbackQuery):
     ])
 
     await callback.message.answer(
+        f"You selected: {product['name']}\n\n"
         "Click the button below to complete your payment:",
         reply_markup=keyboard
     )
