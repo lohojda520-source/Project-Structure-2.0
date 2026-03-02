@@ -8,7 +8,8 @@ from services.paypal_service import capture_payment
 from services.delivery_service import deliver_product
 from services.order_service import order_exists, save_order
 
-# Імпорт тільки потрібних роутерів
+# Роутери
+from handlers.funnel import router as funnel_router
 from handlers.products import router as products_router
 from handlers.payments import router as payments_router
 
@@ -23,6 +24,8 @@ if not BOT_TOKEN:
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
 
+# ВАЖЛИВО: funnel перший
+dp.include_router(funnel_router)
 dp.include_router(products_router)
 dp.include_router(payments_router)
 
@@ -78,6 +81,8 @@ async def cancel_handler(request):
 
 async def main():
     app = web.Application()
+
+    # PayPal routes
     app.router.add_get("/success", success_handler)
     app.router.add_get("/cancel", cancel_handler)
 
@@ -90,7 +95,7 @@ async def main():
     print(f"Server running on port {PORT}")
     print("Bot started...")
 
-    # ВАЖЛИВО — щоб не було TelegramConflictError
+    # Щоб не було TelegramConflictError
     await bot.delete_webhook(drop_pending_updates=True)
 
     await dp.start_polling(bot)
